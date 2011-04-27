@@ -1,0 +1,55 @@
+<html>
+	<head>
+		<title>Test jquery.html5.js</title>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="jquery.html5.js"></script>
+		<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/base/jquery-ui.css" />
+		<link rel="stylesheet" type="text/css" href="jquery.html5.css" />
+		<script type="text/javascript">
+			$(function() { $(document).html5(); });
+		</script>
+	</head>
+	<body>
+		<style>
+			label {display:block;float:left;width:200px;text-align:right;padding-right:20px;}
+		</style>
+		<h1>Tests du plugin jquery.html5.js qui émule certaines fonctionalités du html5</h1>
+		<form action="post.php" method="post">
+			<fieldset>
+				<legend>New attributes</legend>
+				<div>
+					<label>Placeholder</label>
+					<input name="input-placeholder" type="text" placeholder="Type your text here ..." />
+					<textarea name="textarea-placeholder" placeholder="Type your text here ..."></textarea>
+				</div>
+				<div>
+					<label>Autofocus</label>
+					<input name="input-autofocus" type="text" autofocus />
+				</div>
+				<div>
+					<label>Required</label>
+					<input name="input-required" type="text" required />
+				</div>
+			</fieldset>
+			<fieldset>
+				<legend>Validate and featuring new input types</legend>
+				<div class="input-wrapper"><label>email</label><input name="input-email" type="email" /></div>
+				<div class="input-wrapper"><label>url</label><input name="input-url" type="url" /></div>
+				<div class="input-wrapper"><label>number</label><input name="input-number" type="number" /></div>
+				<div class="input-wrapper" style="height:30px;"><label>range</label><input name="input-range" type="range" /></div>
+				<div class="input-wrapper"><label>range (vertical, stylish)</label><input name="input-range-2" type="range" style="height: 75px; width: 49px;"/></div>
+				<div class="input-wrapper"><label>range (with min & max & step)</label><input name="input-range-3" type="range" min="100" max="500" step="2" /></div>
+				<div class="input-wrapper"><label>search</label><input name="input-search" type="search" /></div>
+				<div class="input-wrapper"><label>color</label><input name="input-color" type="color" /></div>
+				<div class="input-wrapper"><label>date</label><input name="input-date" type="date" /></div>
+				<div class="input-wrapper"><label>month</label><input name="input-month" type="month" /></div>
+				<div class="input-wrapper"><label>week</label><input name="input-week" type="week" /></div>
+				<div class="input-wrapper"><label>time</label><input name="input-time" type="time" /></div>
+				<div class="input-wrapper"><label>datetime</label><input name="input-datetime" type="datetime" /></div>
+				<div class="input-wrapper"><label>datetime-local</label><input name="input-datetime-local" type="datetime-local" /></div>
+			</fieldset>
+			<input type="submit" />
+		</form>
+	</body>
+</html>		

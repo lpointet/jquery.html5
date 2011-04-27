@@ -1,0 +1,6 @@
+Plugin that emulate some html5 features :
+	-> input attributes : autofocus | placeholder | required | min | max | step
+	-> input types : email | range
+ 
+Note: the UI effects are provided by jQuery UI and couldn't be used if jQuery UI is not detected
+Note: [x] developpement | [] beta | [] stable

@@ -1,0 +1,17 @@
+.html5base-required-error {
+	border: 2px inset #FF0000;
+}
+
+.ui-slider-horizontal {
+	width: 150px;
+}
+
+.html5base-ui-slider-wrapper {
+	display: inline-block;
+    padding: 5px;
+    position: relative;
+}
+
+.html5base-validate-error {
+	border: 2px inset #FF7700;
+}

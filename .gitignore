@@ -1,0 +1,5 @@
+.DS_Store
+thumbs.db
+Desktop.ini
+*~
+doc_html/.htaccess
