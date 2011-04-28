@@ -1,7 +1,7 @@
 /**
- * @author: Cl?ment Gautier
+ * @author: Clément Gautier
  * @since: 26/04/2011
- * @licence: Licence Creative Commons Paternit? - Partage des Conditions Initiales ? l'Identique 3.0 Unported. http://creativecommons.org/licenses/by-sa/3.0/
+ * @licence: Licence Creative Commons Paternité - Partage des Conditions Initiales à l'Identique 3.0 Unported. http://creativecommons.org/licenses/by-sa/3.0/
  * @description: Plugin that emulate some html5 features :
  * 	-> input attributes : autofocus | placeholder | required | min | max
  *	-> input types : email | range
