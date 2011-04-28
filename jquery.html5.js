@@ -118,20 +118,19 @@
 			attribute: {
 				placeholder: function(closure, options) {
 					$("input[placeholder], textarea[placeholder]", closure).live("focus.html5", function(){
-						if($(this).val() == $(this).attr('placeholder')){
-							$(this).val("");
+                        var $this = $(this);
+						if($this.val() == $this.attr('placeholder') && !$this.data('filled')){
+							$this.val("").data('filled', true);
 						}
 					}).live("blur.html5", function(){
-						if($(this).val() == ""){
-							$(this).val($(this).attr('placeholder'));
+                        var $this = $(this);
+						if($this.val() == ""){
+							$this.val($this.attr('placeholder')).data('filled', false);
 						}
-					}).trigger("blur.html5").parents("form:first").bind("submit.html5", function(e) {
+					}).trigger("blur.html5").closest("form").bind("submit.html5", function(e) {
 						if(!e.isDefaultPrevented()) {
-							$("input[placeholder], textarea[placeholder]",this).each(function() {
-								if($(this).val() == $(this).attr('placeholder')){
-									$(this).val("");
-								}
-							});
+                            $("input[placeholder], textarea[placeholder]",closure).die('blur.html5');
+							$("input[placeholder], textarea[placeholder]",this).trigger('focus.html5');
 						}
 					});
 				},
