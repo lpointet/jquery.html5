@@ -129,9 +129,8 @@
 						}
 					}).trigger("blur.html5").parents("form:first").bind("submit.html5", function(e) {
 						if(!e.isDefaultPrevented()) {
-							$("input[placeholder], textarea[placeholder]",this).each(function() {
-                                $(this).trigger('focus.html5');
-							});
+                            $("input[placeholder], textarea[placeholder]",closure).die('blur.html5');
+							$("input[placeholder], textarea[placeholder]",this).trigger('focus.html5');
 						}
 					});
 				},
