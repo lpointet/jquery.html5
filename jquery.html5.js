@@ -1,7 +1,7 @@
 /**
- * @author: Clément Gautier
+ * @author: ClÃ©ment Gautier
  * @since: 26/04/2011
- * @licence: Licence Creative Commons Paternité - Partage des Conditions Initiales à l'Identique 3.0 Unported. http://creativecommons.org/licenses/by-sa/3.0/
+ * @licence: Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0) http://creativecommons.org/licenses/by-sa/3.0/
  * @description: Plugin that emulate some html5 features :
  * 	-> input attributes : autofocus | placeholder | required | min | max
  *	-> input types : email | range
