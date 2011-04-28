@@ -1,7 +1,7 @@
 /**
- * @author: Clément Gautier
+ * @author: Cl?ment Gautier
  * @since: 26/04/2011
- * @licence: Licence Creative Commons Paternité - Partage des Conditions Initiales à l'Identique 3.0 Unported. http://creativecommons.org/licenses/by-sa/3.0/
+ * @licence: Licence Creative Commons Paternit? - Partage des Conditions Initiales ? l'Identique 3.0 Unported. http://creativecommons.org/licenses/by-sa/3.0/
  * @description: Plugin that emulate some html5 features :
  * 	-> input attributes : autofocus | placeholder | required | min | max
  *	-> input types : email | range
@@ -118,19 +118,19 @@
 			attribute: {
 				placeholder: function(closure, options) {
 					$("input[placeholder], textarea[placeholder]", closure).live("focus.html5", function(){
-						if($(this).val() == $(this).attr('placeholder')){
-							$(this).val("");
+                        var $this = $(this);
+						if($this.val() == $this.attr('placeholder') && !$this.data('filled')){
+							$this.val("").data('filled', true);
 						}
 					}).live("blur.html5", function(){
-						if($(this).val() == ""){
-							$(this).val($(this).attr('placeholder'));
+                        var $this = $(this);
+						if($this.val() == ""){
+							$this.val($this.attr('placeholder')).data('filled', false);
 						}
 					}).trigger("blur.html5").parents("form:first").bind("submit.html5", function(e) {
 						if(!e.isDefaultPrevented()) {
 							$("input[placeholder], textarea[placeholder]",this).each(function() {
-								if($(this).val() == $(this).attr('placeholder')){
-									$(this).val("");
-								}
+                                $(this).trigger('focus.html5');
 							});
 						}
 					});
