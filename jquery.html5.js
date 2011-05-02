@@ -109,13 +109,13 @@
 					}
 				}
 				
-				$.support.html5.type[index] = !!bool;
+				$.support.html5.type[index === 'col' ? 'color' : index] = !!bool;
 				
 			});			
 			
 		},
 		emulate: {
-			attribute: {
+			attribute: { // chapter 4.10.7.2 - "Common input element attributes" of the w3c draft
 				placeholder: function(closure, options) {
 					$("input[placeholder], textarea[placeholder]", closure).live("focus.html5", function(){
                         var $this = $(this);
@@ -152,21 +152,21 @@
 					});
 				}
 			},
-			type: {
+			type: { // chapter 4.10.7.1 - "States of the type attribute" of the w3c html5 draft
 				regex: {
-					search: /^.*$/i, // @todo
-					tel: /^.*$/i, // @todo
-					url: /^.*$/i, // @todo
-					email: /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i,
-					datetime: /^.*$/i, // @todo
-					date: /^.*$/i, // @todo
-					month: /^.*$/i, // @todo
-					week: /^.*$/i, // @todo
-					time: /^.*$/i, // @todo
-					'datetime-local': /^.*$/i,  // @todo
-					number: /^\s*\d+\s*$/, // @todo
-					range: /^.*$/i, // @todo
-					col: /^.*$/i, // @todo
+					search: /.*/, // Text with no line breaks => nothing to do, Browsers already do this check about line breaks
+					tel: /.*/, // Text with no line breaks  => nothing to do, Browsers already do this check about line breaks
+					url: /^[A-Za-z]+:\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/, // An absolute IRI
+					email: /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i, //An e-mail address or list of e-mail addresses 
+					datetime: /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$/i, // A date and time (year, month, day, hour, minute, second, fraction of a second) with the time zone set to UTC [ex: 2011-05-02T11:27:46.541Z]
+					date: /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/, // A date (year, month, day) with no time zone [2011-05-03]
+					month: /^[0-9]{4}-[0-9]{2}$/, // A date consisting of a year and a month with no time zone [2011-06]
+					week: /^[0-9]{4}-W[0-9]{2}$/, // A date consisting of a week-year number and a week number with no time zone [2011-W19]
+					time: /^[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}$/, // A time (hour, minute, seconds, fractional seconds) with no time zone [ex:13:44:19.258]
+					'datetime-local': /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}$/i,  // A date and time (year, month, day, hour, minute, second, fraction of a second) with no time zone [ex:2011-05-02T13:46:40.520]
+					number: /^-?[0-9]*\.?[0-9]*$/, // A numerical value 
+					range: /^-?[0-9]*\.?[0-9]*$/, // A numerical value, with the extra semantic that the exact value is not important 
+					color: /^\#[a-zA-Z0-9]{6}$/, // An sRGB color with 8-bit red, green, and blue components [ex:#000000]
 				}, 
 				validation: function(type, closure, options) {
 					/* type validation : test a defined pattern */
@@ -219,16 +219,16 @@
 									$(this)
 										.wrap('<div class="' + options.baseClassName + 'ui-slider-wrapper"></div>')
 										.after($('<div name="' + $(this).attr('name') + '" class="' + options.baseClassName + 'ui-slider' + '" style="width:' + $(this).outerWidth() + 'px;height:' + $(this).outerHeight() + 'px;"></div>'))
-										.after($('<input type="hidden" name="' + $(this).attr('name') + '" value="' + opts['value'] + '" />'))
+										.hide()
 										.parents('form:first').bind('submit.html5', function(e) {
 											$('div.' + options.baseClassName + 'ui-slider-wrapper', this).each(function() {
-												$('input[type=hidden]', this).val($(".ui-slider", this).slider('value'));
+												$('input[type=range]', this).val($(".ui-slider", this).slider('value'));
 											});
 										}).end()
-										.siblings('div[name="' + $(this).attr('name') + '"].' + options.baseClassName + 'ui-slider:first').slider(opts)
-											.find(".ui-slider-handle").css(opts.orientation === 'horizontal' ? {height: $(this).outerHeight()+8+'px'} : {width: $(this).outerWidth()+8+'px'}).end()
-										.end()
-										.remove();
+										.siblings('div[name="' + $(this).attr('name') + '"].' + options.baseClassName + 'ui-slider:first')
+											.slider(opts)
+											.find(".ui-slider-handle")
+											.css(opts.orientation === 'horizontal' ? {height: $(this).outerHeight()+8+'px'} : {width: $(this).outerWidth()+8+'px'});
 								});
 							} else {
 								if(options.debug) {
@@ -236,6 +236,9 @@
 								}
 							}
 							break;
+						case 'color':
+							// @TODO: display a colorpicker
+							// @TODO: set the default value, if empty onload or onblur, to #000000
 						default:
 							if(options.debug) {
 								$.html5.util.log('No feature available for type ' + type);
@@ -271,7 +274,19 @@
 				},
 				type: {
 					validation: {
-						email: true
+						search: true,
+						tel: true,
+						url: true,
+						email: true,
+						datetime: true,
+						date: true,
+						month: true,
+						week: true,
+						time: true,
+						'datetime-local': true,
+						number: true,
+						range: true,
+						color: true
 					},
 					featuring: {
 						range: true
