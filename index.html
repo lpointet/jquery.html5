@@ -12,7 +12,7 @@
 	</head>
 	<body>
 		<style>
-			label {display:block;float:left;width:200px;text-align:right;padding-right:20px;}
+			label {display:block;float:left;width:500px;text-align:right;padding-right:20px;}
 		</style>
 		<h1>Tests for jquery.html5.js plugin</h1>
 		<form action="post.php" method="post">
@@ -30,6 +30,11 @@
 				<div>
 					<label>Required</label>
 					<input name="input-required" type="text" required />
+				</div>
+				<div>
+					<label>min=5/max=10/type=number</label><input name="min-max-1" type="number" min="5" max="10" /><br />
+					<label>min=1987-08-19/max=2011-05-02/type=date</label><input name="min-max-2" type="date" min="1987-08-19" max="2011-05-02" /><br />
+					<label>min=#00FF00/max=#FF0000/type=color</label><input name="min-max-3" type="color" min="#00FF00" max="#FF0000" />
 				</div>
 			</fieldset>
 			<fieldset>

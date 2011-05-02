@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @author: Clément Gautier
  * @since: 26/04/2011
  * @licence: Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0) http://creativecommons.org/licenses/by-sa/3.0/
@@ -150,6 +150,23 @@
 							}
 						});
 					});
+				},
+				min: function(closure, options) {
+					$("form", closure).live("submit.html5", function(e) {
+						var $this, min, val;
+						$("[min]:input", this).each(function() {
+							$this = $(this);
+							val = $.html5.util.getNumericFromMixed($this.attr('type'), $this.val());
+							min = $.html5.util.getNumericFromMixed($this.attr('type'), $this.attr('min'));
+							// @TODO: damned, $this.attr('type') always return "text". I have to store the input type in the datas and have not the time to do that atm, i will do this tomorrow
+							if(val < min) {
+								$.html5.util.validateError($this, e, options.baseClassName);
+							}
+						});
+					});
+				},
+				max: function(closure, options) {
+					// @TODO
 				}
 			},
 			type: { // chapter 4.10.7.1 - "States of the type attribute" of the w3c html5 draft
@@ -172,13 +189,9 @@
 					/* type validation : test a defined pattern */
 					$("form", closure).live("submit.html5", function(e) {
 						$("[type='"+type+"']:input", this).each(function() {
-							if($(this).val() !== '' && !$.html5.emulate.type.regex[type].test($(this).val())) {
-								if(!e.isDefaultPrevented()) {
-									e.preventDefault();
-								}
-								$(this).addClass(options.baseClassName + 'validate-error')
-									.unbind('blur.html5', $.html5.util.removeClassName)
-									.bind('blur.html5', {className: options.baseClassName + 'validate-error'}, $.html5.util.removeClassName);
+							var $this = $(this);
+							if($this.val() !== '' && !$.html5.emulate.type.regex[type].test($this.val())) {
+								$.html5.util.validateError($this, e, options.baseClassName);
 							}
 						});
 					});
@@ -237,8 +250,14 @@
 							}
 							break;
 						case 'color':
-							// @TODO: display a colorpicker
-							// @TODO: set the default value, if empty onload or onblur, to #000000
+							// @TODO: display a colorpicker ? atm its a "too much" feature because jQuery UI dont have it.
+							$("input[type=color]", closure).live('blur.'+options.closureName,function() {
+								var $this = $(this);
+								if($this.val() === '') {
+									$this.val('#000000');
+								}
+							}).trigger('blur.'+options.closureName);
+							break;
 						default:
 							if(options.debug) {
 								$.html5.util.log('No feature available for type ' + type);
@@ -251,6 +270,23 @@
 		util: {
 			removeClassName: function(event) {
 				$(this).removeClass(event.data.className);
+			},
+			validateError: function(obj, formEvent, baseClassName) {
+				if(!formEvent.isDefaultPrevented()) {
+					formEvent.preventDefault();
+				}
+				obj.addClass(baseClassName + 'validate-error')
+					.unbind('blur.html5', $.html5.util.removeClassName)
+					.bind('blur.html5', {className: baseClassName + 'validate-error'}, $.html5.util.removeClassName);
+			},
+			getNumericFromMixed: function(inputType, value) {
+				console.log(inputType);
+				switch(inputType) {
+					case 'date':
+						return value.substring(0,4)+""+value.substring(5,7)+""+value.substring(8,10);
+					default:
+						return parseFloat(value);
+				}
 			},
 			log: function(text) {
 				console.log('jquery.html5: ' + text);
@@ -265,12 +301,15 @@
 	
 		var settings = {
 			debug: true,
+			closureName: 'html5',
 			baseClassName: 'html5base-',
 			emulate: { // can be desactivated one by one for frontend performance
 				attribute: {
 					placeholder: true,
 					autofocus: true,
-					required: true
+					required: true,
+					min: true,
+					max: true
 				},
 				type: {
 					validation: {
@@ -289,7 +328,8 @@
 						color: true
 					},
 					featuring: {
-						range: true
+						range: true,
+						color: true
 					}
 				}
 			}
