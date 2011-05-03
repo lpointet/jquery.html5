@@ -124,9 +124,9 @@
 						}
 					}).live("blur.html5", function(){
                         var $this = $(this);
-                        $.html5.util.handlePassword($this);
 						if($this.val() == ""){
-                            var fake = $this.data('fakeInput')
+                            $.html5.util.handlePassword($this);
+                            var fake = $this.data('fakeInput');
                             if(fake) {
                                 fake.show();
                                 $this.hide();
@@ -266,10 +266,10 @@
             handlePassword: function(obj) {
                 if(obj.attr('type') === 'password') {
                     try {
-                        obj.attr('type', 'text');
+                        obj[0].setAttribute('type', 'text');
                         if(!obj.data('passwordFocused')) {
                             obj.bind('focus.html5', function() {
-                                obj.attr('type', 'password');
+                                obj[0].setAttribute('type', 'password');
                             }).data('passwordFocused', true);
                         }
                     }
