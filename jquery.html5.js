@@ -118,14 +118,22 @@
 			attribute: {
 				placeholder: function(closure, options) {
 					$("input[placeholder], textarea[placeholder]", closure).live("focus.html5", function(){
-                        var $this = $(this);
-						if($this.val() == $this.attr('placeholder') && !$this.data('filled')){
-							$this.val("").data('filled', true);
+                        var $this = $(this), fake = $this.data('fakeInput');
+						if(($this.val() == $this.attr('placeholder') || fake) && !$this.data('filled')){
+                            $this.show().val("").data('filled', true);
 						}
 					}).live("blur.html5", function(){
                         var $this = $(this);
+                        $.html5.util.handlePassword($this);
 						if($this.val() == ""){
-							$this.val($this.attr('placeholder')).data('filled', false);
+                            var fake = $this.data('fakeInput')
+                            if(fake) {
+                                fake.show();
+                                $this.hide();
+                            }
+                            else
+                                $this.val($this.attr('placeholder'));
+							$this.data('filled', false);
 						}
 					}).trigger("blur.html5").closest("form").bind("submit.html5", function(e) {
 						if(!e.isDefaultPrevented()) {
@@ -254,7 +262,33 @@
 			},
 			isUIAvailable: function() {
 				return typeof jQuery.ui != 'undefined';
-			}
+			},
+            handlePassword: function(obj) {
+                if(obj.attr('type') === 'password') {
+                    try {
+                        obj.attr('type', 'text');
+                        if(!obj.data('passwordFocused')) {
+                            obj.bind('focus.html5', function() {
+                                obj.attr('type', 'password');
+                            }).data('passwordFocused', true);
+                        }
+                    }
+                    catch(e) {
+                        if(!obj.data('fakeInput')) {
+                            obj.data('fakeInput',
+                                $(obj[0].outerHTML.replace(/type(['"])?=password/, 'type=$1text$1'))
+                                    .val(obj.attr('placeholder'))
+                                    .bind('focus.html5', function() {
+                                        obj.trigger('focus.html5');
+                                        $(this).hide();
+                                    })
+                                    .insertBefore(obj)
+                            );
+                        }
+                    }
+                }
+                return obj;
+            }
 		}
 	}
 	
