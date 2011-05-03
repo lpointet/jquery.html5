@@ -276,7 +276,7 @@
                     catch(e) {
                         if(!obj.data('fakeInput')) {
                             obj.data('fakeInput',
-                                $(obj[0].outerHTML.replace(/type(['"])?=password/, 'type=$1text$1'))
+                                $(obj[0].outerHTML.replace(/type=(['"])?password\1/gi, 'type=$1text$1'))
                                     .val(obj.attr('placeholder'))
                                     .bind('focus.html5', function() {
                                         obj.trigger('focus.html5');
