@@ -183,7 +183,7 @@
 					'datetime-local': /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}$/i,  // A date and time (year, month, day, hour, minute, second, fraction of a second) with no time zone [ex:2011-05-02T13:46:40.520]
 					number: /^-?[0-9]*\.?[0-9]*$/, // A numerical value 
 					range: /^-?[0-9]*\.?[0-9]*$/, // A numerical value, with the extra semantic that the exact value is not important 
-					color: /^\#[a-zA-Z0-9]{6}$/, // An sRGB color with 8-bit red, green, and blue components [ex:#000000]
+					color: /^\#[a-zA-Z0-9]{6}$/ // An sRGB color with 8-bit red, green, and blue components [ex:#000000]
 				}, 
 				validation: function(type, closure, options) {
 					/* type validation : test a defined pattern */
