@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @author: Clément Gautier
  * @since: 26/04/2011
  * @licence: Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0) http://creativecommons.org/licenses/by-sa/3.0/
@@ -24,6 +24,8 @@
 			});
 			// Input Types
 			$.each($.html5.emulate.type.regex, function(type, regex) {
+				// store type in data
+				$("input[type='"+type+"']").data(options.closureName+'.type', type);
 				// validation
 				if(!$.support.html5.type[type] && options.emulate.type.validation[type] === true) {
 					$.html5.emulate.type.validation(type, closure, options);
@@ -117,22 +119,27 @@
 		emulate: {
 			attribute: { // chapter 4.10.7.2 - "Common input element attributes" of the w3c draft
 				placeholder: function(closure, options) {
-					$("input[placeholder], textarea[placeholder]", closure).live("focus.html5", function(){
-                        var $this = $(this);
-						if($this.val() == $this.attr('placeholder') && !$this.data('filled')){
-							$this.val("").data('filled', true);
-						}
-					}).live("blur.html5", function(){
-                        var $this = $(this);
-						if($this.val() == ""){
-							$this.val($this.attr('placeholder')).data('filled', false);
-						}
-					}).trigger("blur.html5").closest("form").bind("submit.html5", function(e) {
-						if(!e.isDefaultPrevented()) {
-                            $("input[placeholder], textarea[placeholder]",closure).die('blur.html5');
-							$("input[placeholder], textarea[placeholder]",this).trigger('focus.html5');
-						}
-					});
+					$("input[placeholder], textarea[placeholder]", closure)
+						.live("focus."+options.closureName, function(){
+							var $this = $(this);
+							if($this.val() == $this.attr('placeholder') && !$this.data(options.closureName+'.filled')){
+								$this.val("").data(options.closureName+'.filled', true);
+							}
+						})
+						.live("blur."+options.closureName, function(){
+							var $this = $(this);
+							if($this.val() == ""){
+								$this.val($this.attr('placeholder')).data(options.closureName+'.filled', false);
+							}
+						})
+						.trigger("blur."+options.closureName)
+						.closest("form")
+						.bind("submit."+options.closureName, function(e) {
+							if(!e.isDefaultPrevented()) {
+								$("input[placeholder], textarea[placeholder]",closure).die("blur."+options.closureName);
+								$("input[placeholder], textarea[placeholder]",this).trigger('focus.html5');
+							}
+						});
 				},
 				autofocus: function(closure, options) {
 					$("button[autofocus], input[autofocus], keygen[autofocus], select[autofocus], textarea[autofocus]", closure).last().focus();
@@ -156,8 +163,8 @@
 						var $this, min, val;
 						$("[min]:input", this).each(function() {
 							$this = $(this);
-							val = $.html5.util.getNumericFromMixed($this.attr('type'), $this.val());
-							min = $.html5.util.getNumericFromMixed($this.attr('type'), $this.attr('min'));
+							val = $.html5.util.getNumericFromMixed($this.data(options.closureName+'.type'), $this.val());
+							min = $.html5.util.getNumericFromMixed($this.data(options.closureName+'.type'), $this.attr('min'));
 							// @TODO: damned, $this.attr('type') always return "text". I have to store the input type in the datas and have not the time to do that atm, i will do this tomorrow
 							if(val < min) {
 								$.html5.util.validateError($this, e, options.baseClassName);
@@ -280,7 +287,6 @@
 					.bind('blur.html5', {className: baseClassName + 'validate-error'}, $.html5.util.removeClassName);
 			},
 			getNumericFromMixed: function(inputType, value) {
-				console.log(inputType);
 				switch(inputType) {
 					case 'date':
 						return value.substring(0,4)+""+value.substring(5,7)+""+value.substring(8,10);
