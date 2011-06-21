@@ -7,6 +7,7 @@
  *	-> input types : email | range
  *  Note that the UI effects are provided by jQuery UI and couldn't be used if jQuery UI is not detected
  * @todo: When submiting the form and have some validation errors, placeholder values disapears
+ * @todo: Display validation warning in same time as required fields
 */
 
 (function($){
@@ -25,7 +26,7 @@
 			// Input Types
 			$.each($.html5.emulate.type.regex, function(type, regex) {
 				// store type in data
-				$("input[type='"+type+"']").data(options.closureName+'.type', type);
+				$('input[type="'+type+'"]').data(options.closureName+'.type', type);
 				// validation
 				if(!$.support.html5.type[type] && options.emulate.type.validation[type] === true) {
 					$.html5.emulate.type.validation(type, closure, options);
@@ -117,55 +118,54 @@
 			
 		},
 		emulate: {
-			attribute: { // chapter 4.10.7.2 - "Common input element attributes" of the w3c draft
+			attribute: { // chapter 4.10.7.2 - 'Common input element attributes' of the w3c draft
 				placeholder: function(closure, options) {
-					$("input[placeholder], textarea[placeholder]", closure)
-						.live("focus."+options.closureName, function(){
+					$('input[placeholder], textarea[placeholder]', closure)
+						.live('focus.'+options.closureName, function(){
 							var $this = $(this);
 							if($this.val() == $this.attr('placeholder') && !$this.data(options.closureName+'.filled')){
-								$this.val("").data(options.closureName+'.filled', true);
+								$this.val('').data(options.closureName+'.filled', true);
 							}
 						})
-						.live("blur."+options.closureName, function(){
+						.live('blur.'+options.closureName, function(){
 							var $this = $(this);
-							if($this.val() == ""){
+							if($this.val() == ''){
 								$this.val($this.attr('placeholder')).data(options.closureName+'.filled', false);
 							}
 						})
-						.trigger("blur."+options.closureName)
-						.closest("form")
-						.bind("submit."+options.closureName, function(e) {
+						.trigger('blur.'+options.closureName)
+						.closest('form')
+						.bind('submit.'+options.closureName, function(e) {
 							if(!e.isDefaultPrevented()) {
-								$("input[placeholder], textarea[placeholder]",closure).die("blur."+options.closureName);
-								$("input[placeholder], textarea[placeholder]",this).trigger('focus.html5');
+								$('input[placeholder], textarea[placeholder]',closure).die('blur.'+options.closureName);
+								$('input[placeholder], textarea[placeholder]',this).trigger('focus.'+options.closureName);
 							}
 						});
 				},
 				autofocus: function(closure, options) {
-					$("button[autofocus], input[autofocus], keygen[autofocus], select[autofocus], textarea[autofocus]", closure).last().focus();
+					$('button[autofocus], input[autofocus], keygen[autofocus], select[autofocus], textarea[autofocus]', closure).last().focus();
 				},
 				required: function(closure, options) {
-					$("form", closure).live("submit.html5", function(e) {
-						$("input[required], select[required], textarea[required]", this).each(function() {
+					$('form', closure).live('submit.'+options.closureName, function(e) {
+						$('input[required], select[required], textarea[required]', this).each(function() {
 							if($(this).val() === '') {
 								if(!e.isDefaultPrevented()) {
 									e.preventDefault();
 								}
 								$(this).addClass(options.baseClassName + 'required-error')
-									.unbind('blur.html5', $.html5.util.removeClassName)
-									.bind('blur.html5', {className: options.baseClassName + 'required-error'}, $.html5.util.removeClassName);
+									.unbind('blur.'+options.closureName, $.html5.util.removeClassName)
+									.bind('blur.'+options.closureName, {className: options.baseClassName + 'required-error'}, $.html5.util.removeClassName);
 							}
 						});
 					});
 				},
 				min: function(closure, options) {
-					$("form", closure).live("submit.html5", function(e) {
+					$('form', closure).live('submit.'+options.closureName, function(e) {
 						var $this, min, val;
-						$("[min]:input", this).each(function() {
+						$('[min]:input', this).each(function() {
 							$this = $(this);
 							val = $.html5.util.getNumericFromMixed($this.data(options.closureName+'.type'), $this.val());
 							min = $.html5.util.getNumericFromMixed($this.data(options.closureName+'.type'), $this.attr('min'));
-							// @TODO: damned, $this.attr('type') always return "text". I have to store the input type in the datas and have not the time to do that atm, i will do this tomorrow
 							if(val < min) {
 								$.html5.util.validateError($this, e, options.baseClassName);
 							}
@@ -173,10 +173,20 @@
 					});
 				},
 				max: function(closure, options) {
-					// @TODO
+					$('form', closure).live('submit.'+options.closureName, function(e) {
+						var $this, min, val;
+						$('[min]:input', this).each(function() {
+							$this = $(this);
+							val = $.html5.util.getNumericFromMixed($this.data(options.closureName+'.type'), $this.val());
+							min = $.html5.util.getNumericFromMixed($this.data(options.closureName+'.type'), $this.attr('min'));
+							if(val < min) {
+								$.html5.util.validateError($this, e, options.baseClassName);
+							}
+						});
+					});
 				}
 			},
-			type: { // chapter 4.10.7.1 - "States of the type attribute" of the w3c html5 draft
+			type: { // chapter 4.10.7.1 - 'States of the type attribute' of the w3c html5 draft
 				regex: {
 					search: /.*/, // Text with no line breaks => nothing to do, Browsers already do this check about line breaks
 					tel: /.*/, // Text with no line breaks  => nothing to do, Browsers already do this check about line breaks
@@ -194,8 +204,8 @@
 				}, 
 				validation: function(type, closure, options) {
 					/* type validation : test a defined pattern */
-					$("form", closure).live("submit.html5", function(e) {
-						$("[type='"+type+"']:input", this).each(function() {
+					$('form', closure).live('submit.'+options.closureName, function(e) {
+						$('[type="'+type+'"]:input', this).each(function() {
 							var $this = $(this);
 							if($this.val() !== '' && !$.html5.emulate.type.regex[type].test($this.val())) {
 								$.html5.util.validateError($this, e, options.baseClassName);
@@ -209,7 +219,7 @@
 							// we need jQuery UI and a specified name.
 							if($.html5.util.isUIAvailable()) {
 								var opts;
-								$("input[type=range][name]", closure).each(function() {
+								$('input[type=range][name]', closure).each(function() {
 									opts = {min: 0,	max: 100, step: 1, orientation:'horizontal'}; // default W3C specs
 									
 									if (typeof $(this).attr('min') != 'undefined' && $(this).attr('min') != '') {
@@ -240,14 +250,14 @@
 										.wrap('<div class="' + options.baseClassName + 'ui-slider-wrapper"></div>')
 										.after($('<div name="' + $(this).attr('name') + '" class="' + options.baseClassName + 'ui-slider' + '" style="width:' + $(this).outerWidth() + 'px;height:' + $(this).outerHeight() + 'px;"></div>'))
 										.hide()
-										.parents('form:first').bind('submit.html5', function(e) {
+										.parents('form:first').bind('submit.'+options.closureName, function(e) {
 											$('div.' + options.baseClassName + 'ui-slider-wrapper', this).each(function() {
-												$('input[type=range]', this).val($(".ui-slider", this).slider('value'));
+												$('input[type=range]', this).val($('.ui-slider', this).slider('value'));
 											});
 										}).end()
 										.siblings('div[name="' + $(this).attr('name') + '"].' + options.baseClassName + 'ui-slider:first')
 											.slider(opts)
-											.find(".ui-slider-handle")
+											.find('.ui-slider-handle')
 											.css(opts.orientation === 'horizontal' ? {height: $(this).outerHeight()+8+'px'} : {width: $(this).outerWidth()+8+'px'});
 								});
 							} else {
@@ -257,8 +267,8 @@
 							}
 							break;
 						case 'color':
-							// @TODO: display a colorpicker ? atm its a "too much" feature because jQuery UI dont have it.
-							$("input[type=color]", closure).live('blur.'+options.closureName,function() {
+							// @TODO: display a colorpicker ? atm its a 'too much' feature because jQuery UI dont have it.
+							$('input[type=color]', closure).live('blur.'+options.closureName,function() {
 								var $this = $(this);
 								if($this.val() === '') {
 									$this.val('#000000');
@@ -283,13 +293,13 @@
 					formEvent.preventDefault();
 				}
 				obj.addClass(baseClassName + 'validate-error')
-					.unbind('blur.html5', $.html5.util.removeClassName)
-					.bind('blur.html5', {className: baseClassName + 'validate-error'}, $.html5.util.removeClassName);
+					.unbind('blur.'+options.closureName, $.html5.util.removeClassName)
+					.bind('blur.'+options.closureName, {className: baseClassName + 'validate-error'}, $.html5.util.removeClassName);
 			},
 			getNumericFromMixed: function(inputType, value) {
 				switch(inputType) {
 					case 'date':
-						return value.substring(0,4)+""+value.substring(5,7)+""+value.substring(8,10);
+						return value.substring(0,4)+''+value.substring(5,7)+''+value.substring(8,10);
 					default:
 						return parseFloat(value);
 				}
